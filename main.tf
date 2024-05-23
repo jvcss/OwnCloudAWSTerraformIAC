@@ -102,18 +102,18 @@ resource "null_resource" "reboot_instance" {
 }
 
 # Comando para iniciar o Docker Compose após reiniciar instancia e clonar o repositório
-resource "null_resource" "start_docker_compose" {
-  provisioner "remote-exec" {
-    inline = [
-      "cd ~/cliente",  # Entrar no diretório clonado
-      "docker-compose up -d",  # Iniciar o Docker Compose em modo detached (sem prender o terminal aos logs)
-    ]
-    connection {
-      host = aws_instance.app_server.public_dns
-      user = "ec2-user"
-      private_key = file("C:/Users/vitim/.ssh/novarsa.pem")
-    }
-  }
+# resource "null_resource" "start_docker_compose" {
+#   provisioner "remote-exec" {
+#     inline = [
+#       "cd ~/cliente",  # Entrar no diretório clonado
+#       "docker-compose up -d",  # Iniciar o Docker Compose em modo detached (sem prender o terminal aos logs)
+#     ]
+#     connection {
+#       host = aws_instance.app_server.public_dns
+#       user = "ec2-user"
+#       private_key = file("C:/Users/vitim/.ssh/novarsa.pem")
+#     }
+#   }
 
-  depends_on = [null_resource.reboot_instance]
-}
+#   depends_on = [null_resource.reboot_instance]
+# }
