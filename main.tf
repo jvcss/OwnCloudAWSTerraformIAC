@@ -52,7 +52,7 @@ resource "aws_key_pair" "deployer_key" {
 }
 
 resource "aws_instance" "app_server" {
-  ami           = "ami-0c39cfd0df707c16c"
+  ami           = data.aws_ami.amzn-linux-2023-ami.id  # Use o data source aqui
   instance_type = "t2.micro"
   key_name      = aws_key_pair.deployer_key.key_name
 
