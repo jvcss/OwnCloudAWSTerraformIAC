@@ -71,7 +71,7 @@ resource "null_resource" "install_dependencies" {
       "sudo curl -L https://github.com/docker/compose/releases/latest/download/docker-compose-$(uname -s)-$(uname -m) -o /usr/local/bin/docker-compose",
       "sudo chmod +x /usr/local/bin/docker-compose",
       "sudo yum install -y git",
-      "git clone https://github.com/jmlcas/Owncloud.git ~/cliente",
+      "git clone https://github.com/jvcss/OwnCloudAWSTerraformIAC.git ~/cliente",
       # colocar o ip publico 
     ]
     connection {
