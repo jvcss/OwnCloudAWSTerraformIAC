@@ -57,7 +57,7 @@ resource "aws_instance" "app_server" {
   key_name      = aws_key_pair.deployer_key.key_name
 
   tags = {
-    Name = "AppServerInstance3"
+    Name = "AppServerInstance4"
   }
 }
 
@@ -72,7 +72,41 @@ resource "null_resource" "install_dependencies" {
       "sudo chmod +x /usr/local/bin/docker-compose",
       "sudo yum install -y git",
       "git clone https://github.com/jvcss/OwnCloudAWSTerraformIAC.git ~/cliente",
-      # colocar o ip publico 
+      # colocar o ip publico dinamicamente no arquivo docker-compose.yml
+    ]
+    connection {
+      # usamos endereço publico DNS
+      host = aws_instance.app_server.public_dns
+      # usuario da instancia
+      user = "ec2-user"
+      # caminho da chave SSH privada
+      private_key = file("C:/Users/vitim/.ssh/novarsa.pem")
+    }
+  }
+  depends_on = [aws_instance.app_server]
+}
+
+# Reinicialização da instância porque é necessario após garantir as permissões de acesso do docker
+resource "null_resource" "reboot_instance" {
+  provisioner "remote-exec" {
+    inline = [
+      "sudo reboot"
+    ]
+    connection {
+      host = aws_instance.app_server.public_dns
+      user = "ec2-user"
+      private_key = file("C:/Users/vitim/.ssh/novarsa.pem")  # 
+    }
+  }
+  depends_on = [null_resource.install_dependencies]
+}
+
+# Comando para iniciar o Docker Compose após reiniciar instancia e clonar o repositório
+resource "null_resource" "start_docker_compose" {
+  provisioner "remote-exec" {
+    inline = [
+      "cd ~/cliente",  # Entrar no diretório clonado
+      "docker-compose up -d",  # Iniciar o Docker Compose em modo detached (sem prender o terminal aos logs)
     ]
     connection {
       host = aws_instance.app_server.public_dns
@@ -80,7 +114,8 @@ resource "null_resource" "install_dependencies" {
       private_key = file("C:/Users/vitim/.ssh/novarsa.pem")
     }
   }
-  depends_on = [aws_instance.app_server]
+
+  depends_on = [null_resource.reboot_instance]
 }
 
 # Instalação do Docker, Docker Compose, Node.js, pnpm, e Git
@@ -110,28 +145,6 @@ resource "null_resource" "install_dependencies" {
 #     }
 #   }
 #   depends_on = [aws_instance.app_server]
-# }
-
-# #Reinicialização da instância porque é necessario para obter as permissoes
-# resource "null_resource" "reboot_instance" {
-#   provisioner "remote-exec" {
-#     inline = [
-#       "sudo reboot"
-#     ]
-#     connection {
-#       # Use the private IP address of the instance
-#       host = aws_instance.app_server.private_ip
-#       # Assuming you're using SSH with a key pair
-#       user = "ec2-user"  # Adjust if using a different user
-#       private_key = file("C:/Users/vitim/.ssh/novarsa.pem")  # Path to your private key file
-#     }
-#   }
-
-#   triggers = {
-#     always_run = "${timestamp()}"
-#   }
-
-#   depends_on = [null_resource.install_dependencies]
 # }
 
 # # Comando para iniciar o Docker Compose após clonar o repositório
