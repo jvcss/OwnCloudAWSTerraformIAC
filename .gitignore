@@ -1,0 +1,9 @@
+keys/
+files/
+.terraform/
+mysql/
+redis/
+.terraform.lock.hcl
+plano
+terraform.tfstate
+terraform.tfstate.backup
