@@ -25,6 +25,11 @@ services:
       - ./files:/mnt/data
     networks:
       - owncloud_network
+    deploy:
+      resources:
+        limits:
+          memory: 512M  # Limite de memória
+          cpus: '0.50'  # Limite de CPU (50% de um núcleo)
 
   db:
     image: mariadb:latest
