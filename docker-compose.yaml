@@ -9,7 +9,7 @@ services:
       - db
       - redis
     environment:
-      - OWNCLOUD_DOMAIN=localhost
+      - OWNCLOUD_DOMAIN=localhost:8080
       - OWNCLOUD_TRUSTED_DOMAINS=localhost
       - OWNCLOUD_DB_TYPE=mysql
       - OWNCLOUD_DB_NAME=owncloud
