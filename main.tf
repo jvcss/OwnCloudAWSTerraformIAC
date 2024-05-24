@@ -65,7 +65,7 @@ resource "aws_subnet" "main" {
   }
 }
 
-# (Optional) Create a Dedicated Route Table (recommended)
+# Criação da Tabela de rota dedicada
 resource "aws_route_table" "main_route_table" {
   vpc_id = aws_vpc.main.id
 
@@ -74,12 +74,11 @@ resource "aws_route_table" "main_route_table" {
   }
 }
 
-# (Optional) Associate Dedicated Route Table with Subnet
+# Associa Tabela de rota dedicada ao Subnet
 resource "aws_route_table_association" "main_subnet_association" {
   subnet_id         = aws_subnet.main.id
   route_table_id     = aws_route_table.main_route_table.id
 }
-
 
 # Criação de uma rota na tabela de rotas da subnet para o Internet Gateway
 resource "aws_route" "internet_gateway_route" {
