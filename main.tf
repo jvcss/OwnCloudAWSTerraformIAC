@@ -47,6 +47,11 @@ resource "aws_vpc" "main" {
   }
 }
 
+# Criação do Internet Gateway
+resource "aws_internet_gateway" "main" {
+  vpc_id = aws_vpc.main.id
+}
+
 # Criação da Sub-rede
 resource "aws_subnet" "main" {
   vpc_id                  = aws_vpc.main.id
@@ -58,6 +63,29 @@ resource "aws_subnet" "main" {
   tags = {
     Name = "main_subnet"
   }
+}
+
+# (Optional) Create a Dedicated Route Table (recommended)
+resource "aws_route_table" "main_route_table" {
+  vpc_id = aws_vpc.main.id
+
+  tags = {
+    Name = "main_subnet_route_table"
+  }
+}
+
+# (Optional) Associate Dedicated Route Table with Subnet
+resource "aws_route_table_association" "main_subnet_association" {
+  subnet_id         = aws_subnet.main.id
+  route_table_id     = aws_route_table.main_route_table.id
+}
+
+
+# Criação de uma rota na tabela de rotas da subnet para o Internet Gateway
+resource "aws_route" "internet_gateway_route" {
+  route_table_id         = aws_route_table.main_route_table.id  # Assuming dedicated route table
+  destination_cidr_block = "0.0.0.0/0"  # Rota para todos os IPs (Internet)
+  gateway_id             = aws_internet_gateway.main.id  # ID do Internet Gateway associado à sua VPC
 }
 
 # Definir regras de acesso
