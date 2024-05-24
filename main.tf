@@ -13,14 +13,34 @@ provider "aws" {
   region = "sa-east-1"
 }
 
-# selecionar a imagem AMAZON LINUX
-data "aws_ami" "amzn-linux-2023-ami" {
+# Selecionar a imagem AMAZON LINUX
+data "aws_ami" "amzn_linux" {
   most_recent = true
   owners      = ["amazon"]
 
   filter {
     name   = "name"
     values = ["al2023-ami-2023.*-x86_64"]
+  }
+}
+
+# Criação da VPC
+resource "aws_vpc" "main" {
+  cidr_block = "10.0.0.0/16"
+
+  tags = {
+    Name = "main_vpc"
+  }
+}
+
+# Criação da Sub-rede
+resource "aws_subnet" "main" {
+  vpc_id            = aws_vpc.main.id
+  cidr_block        = "10.0.1.0/24"
+  map_public_ip_on_launch = true  # Isso garante que as instâncias na sub-rede obtenham IPs públicos automaticamente
+
+  tags = {
+    Name = "main_subnet"
   }
 }
 
@@ -59,21 +79,27 @@ resource "aws_security_group" "allow_ssh_http_https" {
   }
 }
 
-# instalação da RSA para SSH
+# Instalação da chave RSA para SSH
 resource "aws_key_pair" "deployer_key" {
   key_name   = "deployer_key"
   public_key = file("C:/Users/vitim/.ssh/novarsa.pub")
 }
 
+# Criação da instância EC2
 resource "aws_instance" "app_server" {
-  ami           = data.aws_ami.amzn-linux-2023-ami.id  # Use o data source aqui
-  instance_type = "t2.micro"
-  key_name      = aws_key_pair.deployer_key.key_name
-  vpc_security_group_ids = [aws_security_group.allow_ssh_http_https.id]
-
+  ami                         = data.aws_ami.amzn_linux.id
+  instance_type               = "t2.micro"
+  key_name                    = aws_key_pair.deployer_key.key_name
+  subnet_id                   = aws_subnet.main.id
+  vpc_security_group_ids      = [aws_security_group.allow_ssh_http_https.id]
+  associate_public_ip_address = true  # Isso garante que a instância tenha um IP público
 
   tags = {
-    Name = "AppServerInstance4"
+    Name = "AppServerInstance5"
+  }
+
+  provisioner "local-exec" {
+    command = "echo ${aws_instance.app_server.public_ip} > public_ip.txt"
   }
 }
 
