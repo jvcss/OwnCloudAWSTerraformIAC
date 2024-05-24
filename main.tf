@@ -2,7 +2,7 @@ terraform {
   required_providers {
     aws = {
       source  = "hashicorp/aws"
-      version = "~> 4.16"
+      version = "4.16"
     }
   }
 
@@ -142,7 +142,7 @@ resource "aws_instance" "app_server" {
   }
 
   provisioner "local-exec" {
-    command = "echo http://${aws_instance.app_server.public_dns} > public_dns.txt"
+    command = "echo ${aws_instance.app_server.public_dns} > public_dns.txt"
   }
 }
 
