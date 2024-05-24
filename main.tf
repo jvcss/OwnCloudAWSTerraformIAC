@@ -24,6 +24,18 @@ data "aws_ami" "amzn_linux" {
   }
 }
 
+# Criação de um conjunto de opções DHCP
+resource "aws_vpc_dhcp_options" "dhcp_options" {
+  domain_name         = "ec2.internal"
+  domain_name_servers = ["AmazonProvidedDNS"]
+}
+
+# Associação das opções DHCP à VPC
+resource "aws_vpc_dhcp_options_association" "dhcp_options_assoc" {
+  vpc_id          = aws_vpc.main.id
+  dhcp_options_id = aws_vpc_dhcp_options.dhcp_options.id
+}
+
 # Criação da VPC
 resource "aws_vpc" "main" {
   cidr_block = "10.0.0.0/16"
@@ -37,9 +49,10 @@ resource "aws_vpc" "main" {
 
 # Criação da Sub-rede
 resource "aws_subnet" "main" {
-  vpc_id            = aws_vpc.main.id
-  cidr_block        = "10.0.1.0/24"
+  vpc_id                  = aws_vpc.main.id
+  cidr_block              = "10.0.1.0/24"
   map_public_ip_on_launch = true  # Isso garante que as instâncias na sub-rede obtenham IPs públicos automaticamente
+  availability_zone       = "us-west-2a" # A sub-rede será criada na zona de disponibilidade "us-west-2a"
 
   tags = {
     Name = "main_subnet"
@@ -97,52 +110,52 @@ resource "aws_instance" "app_server" {
   associate_public_ip_address = true  # Isso garante que a instância tenha um IP público
 
   tags = {
-    Name = "AppServerInstance5"
+    Name = "AppServerInstance6"
   }
 }
 
 # Automatiza Continuos Deploy com Docker Compose
-resource "null_resource" "install_dependencies" {
-  provisioner "remote-exec" {
-    inline = [
-      "sudo yum install docker -y",
-      "sudo service docker start",
-      "sudo chkconfig docker on",
-      "sudo usermod -aG docker ec2-user",
-      "sudo curl -L https://github.com/docker/compose/releases/latest/download/docker-compose-$(uname -s)-$(uname -m) -o /usr/local/bin/docker-compose",
-      "sudo chmod +x /usr/local/bin/docker-compose",
-      "sudo yum install -y git",
-      "git clone https://github.com/jvcss/OwnCloudAWSTerraformIAC.git ~/cliente",
-      "cd ~/cliente",
-      "sed -i 's/localhost/${aws_instance.app_server.private_ip}/g' ~/cliente/nginx/nginx.conf",
-      "sed -i 's/localhost/${aws_instance.app_server.private_ip}/g' ~/cliente/docker-compose.yml"
-    ]
-    connection {
-      # usamos endereço publico DNS
-      host = aws_instance.app_server.public_dns
-      # usuario da instancia
-      user = "ec2-user"
-      # caminho da chave SSH privada
-      private_key = file("C:/Users/vitim/.ssh/novarsa.pem")
-    }
-  }
-  depends_on = [aws_instance.app_server]
-}
+# resource "null_resource" "install_dependencies" {
+#   provisioner "remote-exec" {
+#     inline = [
+#       "sudo yum install docker -y",
+#       "sudo service docker start",
+#       "sudo chkconfig docker on",
+#       "sudo usermod -aG docker ec2-user",
+#       "sudo curl -L https://github.com/docker/compose/releases/latest/download/docker-compose-$(uname -s)-$(uname -m) -o /usr/local/bin/docker-compose",
+#       "sudo chmod +x /usr/local/bin/docker-compose",
+#       "sudo yum install -y git",
+#       "git clone https://github.com/jvcss/OwnCloudAWSTerraformIAC.git ~/cliente",
+#       "cd ~/cliente",
+#       "sed -i 's/localhost/${aws_instance.app_server.private_ip}/g' ~/cliente/nginx/nginx.conf",
+#       "sed -i 's/localhost/${aws_instance.app_server.private_ip}/g' ~/cliente/docker-compose.yml"
+#     ]
+#     connection {
+#       # usamos endereço publico DNS
+#       host = aws_instance.app_server.public_dns
+#       # usuario da instancia
+#       user = "ec2-user"
+#       # caminho da chave SSH privada
+#       private_key = file("C:/Users/vitim/.ssh/novarsa.pem")
+#     }
+#   }
+#   depends_on = [aws_instance.app_server]
+# }
 
-# Reinicialização da instância porque é necessario após garantir as permissões de acesso do docker
-resource "null_resource" "reboot_instance" {
-  provisioner "remote-exec" {
-    inline = [
-      "sudo reboot"
-    ]
-    connection {
-      host = aws_instance.app_server.public_dns
-      user = "ec2-user"
-      private_key = file("C:/Users/vitim/.ssh/novarsa.pem")  # 
-    }
-  }
-  depends_on = [null_resource.install_dependencies]
-}
+# # Reinicialização da instância porque é necessario após garantir as permissões de acesso do docker
+# resource "null_resource" "reboot_instance" {
+#   provisioner "remote-exec" {
+#     inline = [
+#       "sudo reboot"
+#     ]
+#     connection {
+#       host = aws_instance.app_server.public_dns
+#       user = "ec2-user"
+#       private_key = file("C:/Users/vitim/.ssh/novarsa.pem")  # 
+#     }
+#   }
+#   depends_on = [null_resource.install_dependencies]
+# }
 
 # Comando para iniciar o Docker Compose após reiniciar instancia e clonar o repositório
 # resource "null_resource" "start_docker_compose" {
