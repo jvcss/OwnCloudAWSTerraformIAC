@@ -52,7 +52,7 @@ resource "aws_subnet" "main" {
   vpc_id                  = aws_vpc.main.id
   cidr_block              = "10.0.1.0/24"
   map_public_ip_on_launch = true  # Isso garante que as instâncias na sub-rede obtenham IPs públicos automaticamente
-  availability_zone       = "us-west-2a" # A sub-rede será criada na zona de disponibilidade "us-west-2a"
+  availability_zone       = "us-west-1a" # A sub-rede será criada na zona de disponibilidade "us-west-2a"
 
   tags = {
     Name = "main_subnet"
