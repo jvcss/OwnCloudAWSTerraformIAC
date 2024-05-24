@@ -53,6 +53,7 @@ resource "aws_subnet" "main" {
   cidr_block              = "10.0.1.0/24"
   map_public_ip_on_launch = true  # Isso garante que as instâncias na sub-rede obtenham IPs públicos automaticamente
   availability_zone       = "sa-east-1a" # A sub-rede será criada na zona de disponibilidade "sa-east-1a"
+  enable_resource_name_dns_a_record_on_launch  = true # Isso garante que as instâncias na sub-rede obtenham registros DNS privados automaticamente
 
   tags = {
     Name = "main_subnet"
