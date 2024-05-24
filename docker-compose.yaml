@@ -9,8 +9,8 @@ services:
       - db
       - redis
     environment:
-      - OWNCLOUD_DOMAIN=localhost:8080
-      - OWNCLOUD_TRUSTED_DOMAINS=localhost
+      - OWNCLOUD_DOMAIN=ec2-54-94-60-242.sa-east-1.compute.amazonaws.com:8080
+      - OWNCLOUD_TRUSTED_DOMAINS=54.94.60.242,ec2-54-94-60-242.sa-east-1.compute.amazonaws.com,localhost
       - OWNCLOUD_DB_TYPE=mysql
       - OWNCLOUD_DB_NAME=owncloud
       - OWNCLOUD_DB_USERNAME=owncloud
