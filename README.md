@@ -51,5 +51,9 @@ Secret access key</p>
 <p>Finalmente após toda essa configuração podemos garantir que criamos o ambiente IaC consistente.</p>
 <p>Acesse seu OwnCloud via DNS: lembre-se de tirar o S do HTTP, o chrome automaticamente troca o protocolo mas você pode acessar manualmente apenas apagando o S. Em alguns casos é necessário acessar seu site HTTP via Aba Anônina.</p>
 <p>Segue o print da publicação onde: Criamos uma EC2 nova, clonamos o repositório e ligamos os serviços.</p>
-<img src="./passo_a_passo/nginx_arquivo_config.png"></img>
+<img src="./passo_a_passo/automatizado.png"></img>
+<img src="./passo_a_passo/automatizado_aws_view.png"></img>
+<img src="./passo_a_passo/automatizado_owncloud.png"></img>
+<i>user: jvcss<i>
+<i>senha: professormearrumaemprego<i>
 </ol>
