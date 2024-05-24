@@ -155,7 +155,8 @@ resource "null_resource" "install_dependencies" {
       "sudo yum install -y git",
       "git clone https://github.com/jvcss/OwnCloudAWSTerraformIAC.git ~/cliente",
       "cd ~/cliente",
-      "sed -i 's/localhost/${aws_instance.app_server.public_dns}/g' ~/cliente/docker-compose.yaml"
+      "sed -i 's/dominio/${aws_instance.app_server.public_dns}/g' ~/cliente/docker-compose.yaml",
+      "sed -i 's/127.0.0.1/${aws_instance.app_server.public_ip}/g' ~/cliente/docker-compose.yaml",
     ]
     connection {
       # usamos endereço publico DNS
