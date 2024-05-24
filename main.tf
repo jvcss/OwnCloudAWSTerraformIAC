@@ -27,6 +27,8 @@ data "aws_ami" "amzn_linux" {
 # Criação da VPC
 resource "aws_vpc" "main" {
   cidr_block = "10.0.0.0/16"
+  enable_dns_support = true
+  enable_dns_hostnames = true
 
   tags = {
     Name = "main_vpc"
@@ -97,12 +99,9 @@ resource "aws_instance" "app_server" {
   tags = {
     Name = "AppServerInstance5"
   }
-
-  provisioner "local-exec" {
-    command = "echo ${aws_instance.app_server.public_ip} > public_ip.txt"
-  }
 }
 
+# Automatiza Continuos Deploy com Docker Compose
 resource "null_resource" "install_dependencies" {
   provisioner "remote-exec" {
     inline = [
@@ -114,7 +113,9 @@ resource "null_resource" "install_dependencies" {
       "sudo chmod +x /usr/local/bin/docker-compose",
       "sudo yum install -y git",
       "git clone https://github.com/jvcss/OwnCloudAWSTerraformIAC.git ~/cliente",
-      # colocar o ip publico dinamicamente no arquivo docker-compose.yml
+      "cd ~/cliente",
+      "sed -i 's/localhost/${aws_instance.app_server.private_ip}/g' ~/cliente/nginx/nginx.conf",
+      "sed -i 's/localhost/${aws_instance.app_server.private_ip}/g' ~/cliente/docker-compose.yml"
     ]
     connection {
       # usamos endereço publico DNS
