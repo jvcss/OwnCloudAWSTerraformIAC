@@ -32,7 +32,7 @@ Secret access key</p>
 <li>Crie a Infraestrutura como Código em uma pasta</li>
 <img src="./passo_a_passo/IaC_terraform.png"></img>
 <i>o código acima criado por JVCSS é público no <a href="https://github.com/jvcss/OwnCloudAWSTerraformIAC">Repositório</a></i></br>
-<b>deixe seu like</b>
+<b>deixe sua estrela!</b>
 <p>Nessa Infraestrutura de Instância EC2 estamos criando uma EC2 na região SP do brasil, especificamente definindo uma zona para ter acesso ao DNS gerado automaticamente.</p>
 <p>Estamos permitindo acesso irrestrito via SSH uma prática não recomendada! O motivo é para facilitar acesso remoto via diferentes máquinas.</p>
 <p>Estamos configurando a Networking para dar acesso a internet para essa instância. bem como permitir acesso entre instâncias na mesma VPC</p>
@@ -48,4 +48,8 @@ Secret access key</p>
 <p>As definições nesse arquivo estão em resumo definindo limites, como quantidade de nós criados, tempo de validade de cache, tipos de conexão aceita, tipos de arquivo, tamanho de encriptação, local onde salvar logs de acesso, encaminhamento de cabeçalho e o mais importante o URI do serviço a ser encaminhado que nesse caso com o docker é o nome do container definido no arquivo docker-compose.yaml</p>
 <p>Então após definir todo nosso ambiente, realizar as devidas automações como substuição das constantes OWNCLOUD_DOMAIN e OWNCLOUD_TRUSTED_DOMAINS para o IP Publico e DNS publico dessa Instância via arquivo Terraform.</p>
 <p>Nós podemos apenas com simples comandos <code>terraform init</code>  <code>terraform validade</code> <code>terraform plan -out planoNovo</code> concluir a configuração dessa Infraestrutura e enviar para a AWS com <code>terraform apply "planoNovo"</code></p>
+<p>Finalmente após toda essa configuração podemos garantir que criamos o ambiente IaC consistente.</p>
+<p>Acesse seu OwnCloud via DNS: lembre-se de tirar o S do HTTP, o chrome automaticamente troca o protocolo mas você pode acessar manualmente apenas apagando o S. Em alguns casos é necessário acessar seu site HTTP via Aba Anônina.</p>
+<p>Segue o print da publicação onde: Criamos uma EC2 nova, clonamos o repositório e ligamos os serviços.</p>
+<img src="./passo_a_passo/nginx_arquivo_config.png"></img>
 </ol>

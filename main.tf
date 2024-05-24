@@ -140,6 +140,10 @@ resource "aws_instance" "app_server" {
   tags = {
     Name = "AppServerInstance7"
   }
+
+  provisioner "local-exec" {
+    command = "echo http://${aws_instance.app_server.public_dns} > public_dns.txt"
+  }
 }
 
 # Automatiza Continuos Deploy com Docker Compose
