@@ -54,6 +54,6 @@ Secret access key</p>
 <img src="./passo_a_passo/automatizado.png"></img>
 <img src="./passo_a_passo/automatizado_aws_view.png"></img>
 <img src="./passo_a_passo/automatizado_owncloud.png"></img>
-<i>user: jvcss<i>
-<i>senha: professormearrumaemprego<i>
+<i>user: vide Container OwnCloud no Docker-Compose<i>
+<i>senha: vide Container OwnCloud no Docker-Compose<i>
 </ol>
